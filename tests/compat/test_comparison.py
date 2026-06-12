@@ -145,6 +145,29 @@ def test_get_players_for_match_team_returns_match_team_players():
     assert get_players_for_match_team(df, 2, "Green") == ["D"]
 
 
+def test_get_players_for_match_team_excludes_unknown_placeholder():
+    df = pd.DataFrame(
+        [
+            {"match_id": 3, "team": "Blue", "player": "Unknown"},
+            {"match_id": 3, "team": "Blue", "player": " Player A "},
+            {"match_id": 3, "team": "Blue", "player": "Player B"},
+        ]
+    )
+
+    assert get_players_for_match_team(df, 3, "Blue") == [" Player A ", "Player B"]
+
+
+def test_get_players_for_match_team_returns_empty_when_only_unknown_is_available():
+    df = pd.DataFrame(
+        [
+            {"match_id": 4, "team": "Blue", "player": "Unknown"},
+            {"match_id": 4, "team": "Blue", "player": " unknown "},
+        ]
+    )
+
+    assert get_players_for_match_team(df, 4, "Blue") == []
+
+
 def test_filter_player_context_filters_correctly():
     df = _build_comparison_df()
 

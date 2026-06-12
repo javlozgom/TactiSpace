@@ -122,23 +122,6 @@ def _render_filter_summary(events_count: int, players_count: int, teams_count: i
     )
 
 
-def _render_performance_badges() -> None:
-    """Render stable performance constraints used by the app."""
-    st.markdown(
-        """
-        <div class="fea-filter-performance">
-            <h4>Rendimiento app</h4>
-            <div class="fea-badges-row">
-                <span class="fea-badge fea-badge-blue"><span class="fea-badge-dot"></span>st.cache_data</span>
-                <span class="fea-badge fea-badge-green"><span class="fea-badge-dot"></span>MAX_PLOT_EVENTS = 600</span>
-                <span class="fea-badge fea-badge-purple"><span class="fea-badge-dot"></span>Carga 360 lazy</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
 def _render_navigation_legacy() -> str:
     """Render the top-level navigation."""
     if st.session_state.get("active_view") not in NAV_OPTIONS:
@@ -336,7 +319,6 @@ def render_sidebar(df: pd.DataFrame) -> dict:
             teams_count=context_df["team"].nunique() if "team" in context_df.columns else 0,
             matches_count=context_df["match_id"].nunique() if "match_id" in context_df.columns else 0,
         )
-        _render_performance_badges()
 
         with st.container(key="global_filters_actions"):
             if st.button("Reset filtros", width="stretch", icon=":material/refresh:"):

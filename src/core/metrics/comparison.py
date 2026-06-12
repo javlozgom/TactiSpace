@@ -101,7 +101,12 @@ def get_players_for_match_team(
     player_df = df[(df["match_id"] == match_id) & (df["team"] == team)]
     if player_df.empty:
         return []
-    return sorted(player_df["player"].dropna().astype(str).unique().tolist())
+    players = [
+        player_name
+        for player_name in player_df["player"].dropna().astype(str).unique().tolist()
+        if _is_selectable_comparison_player(player_name)
+    ]
+    return sorted(players)
 
 
 def filter_player_context(
@@ -233,6 +238,14 @@ def _build_differences(
 def _is_numeric(value: object) -> bool:
     """Return whether a value should be compared numerically."""
     return isinstance(value, Number) and not isinstance(value, bool)
+
+
+def _is_selectable_comparison_player(player_name: object) -> bool:
+    """Return whether one player name should be exposed in advanced comparison selectors."""
+    if player_name is None:
+        return False
+    normalized = str(player_name).strip()
+    return bool(normalized) and normalized.lower() != "unknown"
 
 
 def _get_player_team_context(df: pd.DataFrame, player_df: pd.DataFrame) -> pd.DataFrame:

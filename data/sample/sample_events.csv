@@ -1,0 +1,41 @@
+match_id,team,player,minute,second,event_type,outcome,x,y,end_x,end_y,possession_id
+1001,Spain,Rodri,3,12,Recovery,Won,48,36,48,36,1
+1001,Spain,Rodri,3,15,Pass,Successful,48,36,60,34,1
+1001,Spain,Fabian Ruiz,3,19,Carry,Successful,60,34,74,30,1
+1001,Spain,Lamine Yamal,3,24,Dribble,Successful,74,30,82,24,1
+1001,Spain,Lamine Yamal,3,28,Pass,Successful,82,24,100,20,1
+1001,Spain,Alvaro Morata,3,33,Shot,Saved,100,20,120,40,1
+1001,Italy,Calafiori,7,2,Recovery,Won,42,50,42,50,2
+1001,Italy,Jorginho,7,6,Pass,Successful,42,50,55,46,2
+1001,Italy,Barella,7,11,Carry,Successful,55,46,71,40,2
+1001,Italy,Chiesa,7,16,Dribble,Unsuccessful,71,40,78,33,2
+1001,Italy,Chiesa,7,18,Turnover,Lost,78,33,78,33,2
+1001,Spain,Carvajal,12,4,Recovery,Won,38,18,38,18,3
+1001,Spain,Carvajal,12,7,Pass,Successful,38,18,58,22,3
+1001,Spain,Pedri,12,12,Carry,Successful,58,22,72,28,3
+1001,Spain,Pedri,12,18,Pass,Successful,72,28,94,34,3
+1001,Spain,Nico Williams,12,22,Shot,Goal,94,34,120,40,3
+1001,Italy,Dimarco,18,5,Pass,Successful,30,62,48,58,4
+1001,Italy,Pellegrini,18,10,Carry,Successful,48,58,63,54,4
+1001,Italy,Scamacca,18,17,Shot,Off Target,92,42,120,38,4
+1001,Spain,Rodri,25,14,Pass,Successful,52,37,66,42,5
+1001,Spain,Fabian Ruiz,25,19,Pass,Unsuccessful,66,42,84,44,5
+1001,Italy,Barella,25,24,Recovery,Won,84,44,84,44,6
+1001,Italy,Barella,25,29,Pass,Successful,84,44,96,36,6
+1001,Italy,Scamacca,25,35,Shot,Saved,96,36,120,40,6
+1002,Germany,Kroos,4,8,Pass,Successful,44,36,58,34,7
+1002,Germany,Musiala,4,13,Carry,Successful,58,34,76,28,7
+1002,Germany,Musiala,4,18,Dribble,Successful,76,28,85,24,7
+1002,Germany,Havertz,4,24,Shot,Goal,102,26,120,40,7
+1002,France,Tchouameni,9,40,Recovery,Won,50,44,50,44,8
+1002,France,Griezmann,9,46,Pass,Successful,50,44,66,39,8
+1002,France,Mbappe,9,52,Carry,Successful,66,39,88,29,8
+1002,France,Mbappe,9,58,Shot,Off Target,88,29,120,40,8
+1002,Germany,Rudiger,30,3,Recovery,Won,43,48,43,48,9
+1002,Germany,Kimmich,30,8,Pass,Successful,43,48,65,50,9
+1002,Germany,Sane,30,14,Dribble,Unsuccessful,65,50,72,46,9
+1002,Germany,Sane,30,18,Turnover,Lost,72,46,72,46,9
+1002,France,Saliba,41,12,Recovery,Won,35,30,35,30,10
+1002,France,Theo Hernandez,41,16,Pass,Successful,35,30,57,26,10
+1002,France,Griezmann,41,21,Pass,Successful,57,26,82,22,10
+1002,France,Mbappe,41,27,Shot,Saved,82,22,120,40,10

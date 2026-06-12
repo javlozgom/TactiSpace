@@ -1,0 +1,1 @@
+"""Declarative application configuration."""

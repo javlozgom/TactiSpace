@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+.DS_Store
+.vscode/
+.idea/
+
+# Datos pesados o generados
+data/raw/
+data/processed/
+*.parquet
+
+# Mantener samples pequenos
+!data/sample/
+!data/sample/*
+
+# Salidas
+outputs/
+exports/
+
+streamlit_stdout.log
+streamlit_stderr.log

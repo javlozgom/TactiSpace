@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+matplotlib
+mplsoccer
+jupyter
+pytest
+pyarrow
+plotly
+scipy
+shapely
+statsbombpy

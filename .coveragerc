@@ -1,0 +1,38 @@
+[run]
+source = src
+
+[report]
+show_missing = True
+omit =
+    src/ui/*
+    src/ui/**/*
+    src/import_statsbombV8.py
+    src/tfg/*
+    src/*_view.py
+    src/comparison.py
+    src/data_loader.py
+    src/data_paths.py
+    src/delaunay.py
+    src/event_metrics.py
+    src/export_utils.py
+    src/failed_passes.py
+    src/filters.py
+    src/freeze_frame.py
+    src/highlights.py
+    src/lineups.py
+    src/loss_analysis.py
+    src/metric_filters.py
+    src/metrics.py
+    src/pass_decision.py
+    src/percentiles.py
+    src/player_labels.py
+    src/position_priorities.py
+    src/preprocessing.py
+    src/presets.py
+    src/rankings.py
+    src/spatial.py
+    src/spatial_visualizations.py
+    src/statsbombpy_validation.py
+    src/core/losses/*
+    src/core/spatial/freeze_frame.py
+    src/core/spatial/voronoi.py

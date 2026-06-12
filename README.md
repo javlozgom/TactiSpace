@@ -4,91 +4,134 @@ TactiSpace es una aplicacion Streamlit desarrollada como parte de un TFG para
 el analisis visual, contextual y espacial de eventos de futbol a partir de
 datos de StatsBomb Euro 2024.
 
-## Descripcion
+La aplicacion se apoya en una arquitectura modular por capas, datasets
+normalizados generados offline y una suite de tests orientada a cubrir la
+logica principal del sistema.
 
-La aplicacion trabaja sobre datasets procesados offline y permite explorar
-eventos, perdidas, metricas especificas, comparativas y analisis espaciales
-con una interfaz orientada a uso academico y defensa del proyecto.
+## Estructura funcional de la aplicacion
 
-## Funcionalidades principales
+La interfaz se estructura en tres vistas principales:
 
-La app incluye las siguientes vistas:
+- `Vista general`: espacio de contexto con `Inicio`, `Resumen` y `Guia`.
+- `Sistema de analisis`: bloque principal de trabajo con `Metricas especificas`,
+  `Eventos`, `Mapa de calor`, `Comparativa`, `Voronoi/Delaunay` y `Perdidas`.
+- `Datos y depuracion`: vista tecnica para inspeccionar el subconjunto filtrado
+  y validar el contexto aplicado.
 
-- `Inicio`
-- `Resumen`
-- `Metricas especificas`
-- `Comparativa`
-- `Perdidas`
-- `Analisis espacial`
-- `Eventos`
-- `Mapa de calor`
-- `Secuencias`
-- `Datos brutos`
+Los filtros globales de partido, equipo, jugador y tramo temporal se comparten
+entre vistas. La app tambien muestra indicadores de contexto filtrado y aplica
+carga diferida para los datos `360`, que solo se leen cuando el usuario entra
+en el analisis espacial.
 
-## Modulo espacial
+## Capacidades principales
 
-El modulo `Analisis espacial` trabaja sobre datos `360` normalizados y combina
-varias capas:
+- Exploracion de eventos filtrados por partido, equipo, jugador y minutos.
+- Calculo de metricas basicas y metricas especificas por tipo de accion.
+- Comparativa entre contextos de juego.
+- Analisis de perdidas y pases fallidos.
+- Visualizaciones espaciales con `freeze-frame`, diagramas de `Voronoi`,
+  triangulacion de `Delaunay` y recomendacion interpretable de pase.
+- Vista de datos y depuracion para revisar las filas reales que sostienen cada
+  conclusion.
 
-- `freeze-frame` del evento seleccionado
-- diagramas de `Voronoi`
-- triangulacion de `Delaunay`
-- recomendacion basada en conectividad local mediante `Delaunay`
-- recomendacion basada en `scoring` espacial interpretable
+## Arquitectura del proyecto
 
-Ademas, la vista permite inspeccionar el diagnostico del evento y exportar un
-resumen ligero del caso seleccionado.
+La estructura del proyecto separa responsabilidades de forma explicita:
 
-## Arquitectura de datos
+- `src/repositories`: acceso a datos y cache de lectura.
+- `src/services`: orquestacion de contexto, filtros, exportacion y analisis.
+- `src/core`: logica de dominio para metricas, reglas, modelos y espacial.
+- `src/state`: gestion del estado de sesion y navegacion.
+- `src/ui`: vistas, componentes, estilos y presentadores de Streamlit.
+- `scripts`: construccion offline de datasets y validaciones externas.
 
-La arquitectura general del proyecto sigue este flujo:
+El punto de entrada es `app.py`, que inicializa la sesion, carga los eventos,
+construye el contexto comun y enruta la navegacion principal.
+
+## Datos y pipeline
+
+La app prioriza datasets normalizados generados offline para reducir el trabajo
+en cada arranque:
 
 ```text
-raw -> scripts offline -> parquets normalizados -> app Streamlit
+datos raw -> scripts offline -> parquets normalizados -> app Streamlit
 ```
 
-Datasets principales:
+Archivos principales usados por la aplicacion:
 
 - `data/processed/events_normalized.parquet`
 - `data/processed/lineups_normalized.parquet`
 - `data/processed/three_sixty_normalized.parquet`
 
-La app consume estos parquets ya preparados y evita recalcular la normalizacion
-en cada arranque.
+Fuentes auxiliares del dataset:
 
-## Ejecucion
+- `data/raw/statsbomb/euro_2024/matches.json`
+- `data/raw/statsbomb/euro_2024/lineups/`
+- `data/raw/statsbomb/euro_2024/three_sixty/`
 
-Instalacion de dependencias:
+La aplicacion puede apoyarse en `data/processed/events.parquet` como origen
+base, aunque el flujo recomendado consiste en trabajar con los datasets
+normalizados.
+
+## Puesta en marcha
+
+Crear y activar un entorno virtual:
+
+```bash
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+Instalar dependencias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Construccion del pipeline normalizado:
+Construir el pipeline normalizado:
 
 ```bash
 python scripts/build_all_normalized.py
 ```
 
-Arranque de la app:
+Lanzar la aplicacion:
 
 ```bash
 streamlit run app.py
 ```
 
-## Validacion offline con statsbombpy
-
-El proyecto incluye una validacion offline para contrastar los parquets
-normalizados con `statsbombpy`, sin usar `statsbombpy` dentro de la app
-Streamlit.
-
-Ejemplo rapido:
+Validar offline los datos normalizados frente a `statsbombpy`:
 
 ```bash
 python scripts/validate_statsbombpy_data.py --limit 3
+python scripts/validate_statsbombpy_data.py --all
 ```
 
-Mas detalle en [docs/data_pipeline.md](docs/data_pipeline.md).
+`statsbombpy` se utiliza como herramienta de contraste offline y no forma parte
+del flujo interactivo de la aplicacion en Streamlit.
+
+## Testing
+
+El repositorio incluye una suite de tests organizada por capas:
+
+- `tests/compat`
+- `tests/core`
+- `tests/repositories`
+- `tests/services`
+- `tests/state`
+- `tests/ui`
+
+Comandos utiles:
+
+```bash
+python -m pytest
+python -m pytest --cov=src --cov-report=term-missing
+```
+
+Estado verificado en este repositorio:
+
+- `216` tests superados.
+- `90%` de cobertura sobre `src` con la configuracion actual de `.coveragerc`.
 
 ## Estructura resumida
 
@@ -98,17 +141,46 @@ Mas detalle en [docs/data_pipeline.md](docs/data_pipeline.md).
 |-- README.md
 |-- requirements.txt
 |-- data/
+|   |-- processed/
 |   |-- raw/
-|   `-- processed/
+|   `-- sample/
 |-- docs/
 |   |-- data_pipeline.md
+|   |-- performance.md
 |   `-- spatial_methodology.md
+|-- notebooks/
 |-- scripts/
+|-- sql/
 |-- src/
+|   |-- config/
+|   |-- core/
+|   |-- repositories/
+|   |-- services/
+|   |-- state/
+|   `-- ui/
 `-- tests/
 ```
 
 ## Documentacion relacionada
 
 - [docs/data_pipeline.md](docs/data_pipeline.md)
+- [docs/performance.md](docs/performance.md)
 - [docs/spatial_methodology.md](docs/spatial_methodology.md)
+
+## Fuente de datos y atribucion
+
+<p align="center">
+  <img
+    src="https://raw.githubusercontent.com/statsbomb/open-data/master/img/SB%20-%20Icon%20Lockup%20-%20Colour%20positive.png"
+    alt="StatsBomb logo"
+    width="260"
+  />
+</p>
+
+Los datos utilizados en este proyecto proceden de `StatsBomb Open Data`. En la
+memoria, la documentacion y cualquier publicacion o presentacion derivada de
+este trabajo, la fuente de datos se citara expresamente como `StatsBomb`.
+
+Cuando sea necesario incluir identidad visual asociada a esa fuente, se
+utilizara el logo oficial y los recursos de marca publicados por StatsBomb en
+su [Media Pack](https://statsbomb.com/media-pack/).

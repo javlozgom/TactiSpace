@@ -294,7 +294,7 @@ TAB_GUIDES = [
         "what_you_see": [
             "Jugador vs equipo.",
             "Comparativa avanzada entre dos contextos.",
-            "Percentiles para lectura relativa de perfil.",
+            "Percentiles para lectura relativa de perfil, con presets identificados por la pareja de métricas comparadas.",
         ],
         "how_to_use": [
             "Usa la comparativa básica para ver si un jugador está por encima o por debajo de su equipo en un tipo de acción.",

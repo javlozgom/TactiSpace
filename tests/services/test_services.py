@@ -195,6 +195,19 @@ def test_spatial_service_handles_selected_match_freeze_frames_and_fallback_colum
     assert count_visible_spatial_events(pd.DataFrame([{"three_sixty_event_id": "evt-1"}]), None) == 1
 
 
+def test_spatial_service_covers_match_scope_cleanup_and_fallback_columns():
+    filtered_df = pd.DataFrame([{"match_id": " 1 "}, {"match_id": ""}, {"match_id": None}, {"match_id": "2"}])
+
+    assert get_spatial_match_ids("Todos", filtered_df) == ("1", "2")
+    assert count_visible_spatial_events(pd.DataFrame(), pd.DataFrame([{"event_id": "evt-1"}])) == 0
+    assert count_visible_spatial_events(pd.DataFrame([{"event_id": "evt-1"}]), pd.DataFrame([{"event_id": None}])) == 0
+    assert count_visible_spatial_events(pd.DataFrame([{"freeze_frame_available": True}, {"freeze_frame_available": False}]), None) == 1
+    assert count_visible_spatial_events(pd.DataFrame([{"has_360": True}, {"has_360": False}]), None) == 1
+    assert count_visible_spatial_events(pd.DataFrame([{"has_three_sixty": True}, {"has_three_sixty": False}]), None) == 1
+    assert count_visible_spatial_events(pd.DataFrame([{"visible_area_available": True}, {"visible_area_available": False}]), None) == 1
+    assert count_visible_spatial_events(pd.DataFrame([{"freeze_frame_available": "bad"}]), None) == 1
+
+
 def test_prepare_spatial_and_voronoi_contexts(monkeypatch):
     event = pd.Series({"event_id": "evt-1"})
     freeze_frame_df = pd.DataFrame([{"player": "Rodri"}])

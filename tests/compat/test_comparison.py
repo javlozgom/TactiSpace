@@ -11,6 +11,7 @@ from src.comparison import (
     get_players_for_match_team,
     get_teams_for_match,
 )
+from src.core.metrics.comparison import _build_differences, _get_player_team_context, _is_numeric
 
 
 def _build_comparison_df() -> pd.DataFrame:
@@ -270,3 +271,34 @@ def test_comparison_helpers_handle_empty_dataframe():
         {"match_id": 2, "team": "Green", "player": "D"},
         "Pass",
     ) == {}
+
+
+def test_comparison_helpers_cover_guard_clauses_and_type_fallbacks():
+    df = _build_comparison_df()
+
+    assert compare_player_to_team(df, "Todos", "Pass") == {}
+    assert compare_two_players(df, "", "B", "Pass") == {}
+    mixed_matches = pd.DataFrame({"match_id": [1, "2"]})
+    assert get_available_matches(mixed_matches) == [1, "2"]
+
+
+def test_internal_comparison_helpers_cover_non_numeric_and_team_fallbacks():
+    differences = _build_differences(
+        {"metric_a": 4, "text": "x", "flag": True},
+        {"metric_a": 2, "text": "y", "flag": False},
+        "left",
+        "right",
+    )
+
+    assert differences["metric_a"]["difference"] == 2.0
+    assert "text" not in differences
+    assert _is_numeric(4) is True
+    assert _is_numeric(True) is False
+
+    no_team_df = pd.DataFrame([{"player": "A"}])
+    assert _get_player_team_context(no_team_df, no_team_df).equals(no_team_df)
+
+    empty_mode_df = pd.DataFrame([{"team": None}])
+    assert _get_player_team_context(pd.DataFrame([{"team": "Blue"}]), empty_mode_df).equals(
+        pd.DataFrame([{"team": "Blue"}])
+    )

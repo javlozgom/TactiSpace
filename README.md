@@ -88,6 +88,21 @@ Instalar dependencias:
 pip install -r requirements.txt
 ```
 
+Entorno de referencia verificado para la aplicacion:
+
+- `Python 3.12.0`
+- `streamlit 1.58.0`
+- `pandas 3.0.3`
+- `numpy 2.4.6`
+- `scipy 1.17.1`
+- `shapely 2.1.2`
+- `plotly 6.8.0`
+- `matplotlib 3.11.0`
+- `mplsoccer 1.6.1`
+- `pyarrow 24.0.0`
+- `statsbombpy 1.19.0`
+- `pytest 9.0.3`
+
 Construir el pipeline normalizado:
 
 ```bash
@@ -112,7 +127,8 @@ del flujo interactivo de la aplicacion en Streamlit.
 
 ## Testing
 
-El repositorio incluye una suite de tests organizada por capas:
+El repositorio incluye pruebas automatizadas sobre los principales bloques de
+la aplicacion, con especial atencion a:
 
 - `tests/compat`
 - `tests/core`
@@ -128,10 +144,8 @@ python -m pytest
 python -m pytest --cov=src --cov-report=term-missing
 ```
 
-Estado verificado en este repositorio:
-
-- `216` tests superados.
-- `90%` de cobertura sobre `src` con la configuracion actual de `.coveragerc`.
+En el estado actual del repositorio, la suite alcanza un `94%` de cobertura en
+la medicion global aplicada sobre `app.py`, `src/` y `scripts/`.
 
 ## Estructura resumida
 

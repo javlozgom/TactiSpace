@@ -16,6 +16,15 @@ from src.percentiles import (
     is_efficiency_metric,
     is_risk_metric,
 )
+from src.core.percentiles.calculations import (
+    _build_percentile_mode_label,
+    _find_metric_event_source,
+    _interpret_percentile_series,
+    _is_unknown_player,
+    _is_unknown_position,
+    _looks_like_preset_definition,
+    _safe_metric_value,
+)
 
 
 def _build_percentile_df() -> pd.DataFrame:
@@ -387,3 +396,85 @@ def test_presets_do_not_repeat_same_metric_pair_and_position():
         for preset_definition in flattened.values()
     ]
     assert len(signatures) == len(set(signatures))
+
+
+def test_metric_metadata_and_interpretation_fallbacks_cover_unknown_cases():
+    metadata = get_metric_metadata("unknown_metric")
+
+    assert metadata["family"] == "Otras"
+    assert "rendimiento relativo" in get_percentile_interpretation_text("unknown_metric", "other_metric").lower()
+    assert "volumen" in get_percentile_interpretation_text("total_passes", "goals").lower()
+
+
+def test_flatten_percentile_presets_accepts_mixed_structures():
+    presets = {
+        "directo": {
+            "description": "x",
+            "x_metric": "goals",
+            "y_metric": "total_shots",
+            "position": "Atacante",
+            "min_events": 5,
+        },
+        "grupo": {
+            "preset": {
+                "description": "y",
+                "x_metric": "goals",
+                "y_metric": "total_shots",
+                "position": "Atacante",
+                "min_events": 5,
+            }
+        },
+        "ruido": "ignorar",
+    }
+
+    flattened = flatten_percentile_presets(presets)
+
+    assert set(flattened) == {"directo", "preset"}
+
+
+def test_build_player_metric_dataset_filters_unknowns_and_position_thresholds():
+    df = pd.DataFrame(
+        [
+            {"player": "Unknown", "team": "Blue", "position": "Forward", "event_type": "Shot", "outcome": "Goal", "x": 100, "y": 40},
+            {"player": "A", "team": "Blue", "position": "Goalkeeper", "event_type": "Shot", "outcome": "Goal", "x": 100, "y": 40},
+            {"player": "B", "team": "Blue", "position": "Forward", "event_type": "Shot", "outcome": "Goal", "x": 100, "y": 40},
+        ]
+    )
+
+    dataset = build_player_metric_dataset(
+        df,
+        metrics=["goals"],
+        position_filter="Atacante",
+        min_events=1,
+        min_metric="goals",
+        min_metric_value=1,
+    )
+
+    assert dataset["player"].tolist() == ["B"]
+
+
+def test_add_interpreted_percentiles_handles_empty_input_and_mode_labels():
+    empty_result = add_interpreted_percentiles(pd.DataFrame(), "goals", "failed_passes")
+
+    assert empty_result.empty
+    assert _build_percentile_mode_label("higher_is_risk", "efficiency") == "Riesgo"
+    assert _build_percentile_mode_label("efficiency", "higher_is_better") == "Eficiencia"
+    assert _build_percentile_mode_label("volume", "higher_is_better") == "Volumen"
+    assert _build_percentile_mode_label("higher_is_better", "higher_is_better") == "Rendimiento relativo"
+
+
+def test_percentile_internal_helpers_cover_remaining_branches():
+    assert _is_unknown_player(" unknown ") is True
+    assert _is_unknown_player("Rodri") is False
+    assert _is_unknown_position(" Unknown ") is True
+    assert _is_unknown_position("Defensa") is False
+    assert _find_metric_event_source("successful_dribbles") == "Dribble"
+    assert _find_metric_event_source("metrica_inexistente") is None
+    assert _safe_metric_value(True) == 1
+    assert _safe_metric_value("4.0") == 4
+    assert _safe_metric_value("4.5") == 4.5
+    assert _safe_metric_value("x") == 0
+    assert _interpret_percentile_series(pd.Series([20.0, 80.0]), "lower_is_better").tolist() == [80.0, 20.0]
+    assert _looks_like_preset_definition(
+        {"description": "x", "x_metric": "a", "y_metric": "b", "position": "Todas", "min_events": 1}
+    ) is True

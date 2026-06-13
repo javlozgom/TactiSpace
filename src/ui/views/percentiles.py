@@ -72,6 +72,7 @@ def render_percentiles_section(filtered_df: pd.DataFrame, full_df: pd.DataFrame)
                 "Preset",
                 list(preset_groups.get(preset_group, {}).keys()),
                 key="percentiles_preset_name",
+                format_func=lambda name: _format_percentile_preset_label(str(name), presets),
             )
         with preset_cols[2]:
             if st.button("Aplicar preset", key="percentiles_apply_preset", width="stretch", icon=":material/tune:"):
@@ -409,6 +410,21 @@ def _apply_percentile_preset(preset_name: str, presets: dict[str, dict[str, obje
     st.session_state["percentiles_y_metric"] = y_metric
     st.session_state["percentiles_position_filter"] = str(preset.get("position", "Todas"))
     st.session_state["percentiles_min_events"] = int(preset.get("min_events", 5))
+
+
+def _format_percentile_preset_label(preset_name: str, presets: dict[str, dict[str, object]]) -> str:
+    """Return a compact visible label for one percentile preset selector entry."""
+    preset = presets.get(preset_name)
+    if not preset:
+        return preset_name
+
+    x_metric = str(preset.get("x_metric", "")).strip()
+    y_metric = str(preset.get("y_metric", "")).strip()
+    x_label = get_metric_label(x_metric) if x_metric else ""
+    y_label = get_metric_label(y_metric) if y_metric else ""
+    if x_label and y_label:
+        return f"{x_label} / {y_label}"
+    return preset_name
 
 
 def _ensure_valid_axis_state(metric_groups: dict[str, dict[str, str]], group_names: list[str]) -> None:
